@@ -1,9 +1,9 @@
-package pl.edu.agh.ki.toik.sna.crawler.krs;
+package pl.edu.agh.ki.toik.sna.persistence.iface;
 
 public class GroupData {
-	String id = null;
-	String source = null;
-	String name = null;
+	public String id = null;
+	public String source = null;
+	public String name = null;
 	
 	public void validate() {
 		assert id != null;

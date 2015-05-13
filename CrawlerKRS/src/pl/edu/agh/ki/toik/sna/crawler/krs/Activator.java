@@ -24,6 +24,7 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		crawler.requestStop();
 		crawler.join();
+		
 		System.out.println("Goodbye World!!");
 	}
 

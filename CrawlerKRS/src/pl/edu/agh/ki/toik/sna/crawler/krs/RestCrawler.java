@@ -3,6 +3,9 @@ package pl.edu.agh.ki.toik.sna.crawler.krs;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.edu.agh.ki.toik.sna.persistence.iface.GroupData;
+import pl.edu.agh.ki.toik.sna.persistence.iface.Persister;
+import pl.edu.agh.ki.toik.sna.persistence.iface.Person;
 import us.monoid.json.JSONArray;
 import us.monoid.json.JSONException;
 import us.monoid.json.JSONObject;
@@ -15,6 +18,18 @@ public class RestCrawler extends Thread {
 	final String ENTITIES_API_ENDPOINT = "https://api.mojepanstwo.pl/krs/podmioty?fields[]=id&page=__PAGE__";
 	final String ENTITY_API_ENDPOINT = "https://api.mojepanstwo.pl/krs/podmioty/__ID__?fields[]=nazwa_skrocona&layers[]=reprezentacja&layers[]=nadzor";
 	boolean stop = false;
+	
+	Persister persister;
+	
+	public synchronized void setPersister(Persister persister) {
+		this.persister = persister;
+	}
+	
+	public synchronized void unsetPersister(Persister persister) {
+		if(this.persister == persister) {
+			this.persister = null;
+		}
+	}
 	
 	public void requestStop() {
 		stop = true;

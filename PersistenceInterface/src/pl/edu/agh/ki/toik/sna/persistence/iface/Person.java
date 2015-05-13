@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.toik.sna.crawler.krs;
+package pl.edu.agh.ki.toik.sna.persistence.iface;
 
 import java.util.ArrayList;
 import java.util.List;
