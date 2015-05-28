@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="pl.edu.agh.ki.toik.sna.persistence.neo4j">
+   <implementation class="pl.edu.agh.ki.toik.sna.persistence.neo4j.Neo4jPersister"/>
+   <service>
+      <provide interface="pl.edu.agh.ki.toik.sna.persistence.iface.Persister"/>
+   </service>
+</scr:component>
