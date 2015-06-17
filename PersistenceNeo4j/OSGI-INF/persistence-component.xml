@@ -4,5 +4,5 @@
    <service>
       <provide interface="pl.edu.agh.ki.toik.sna.persistence.iface.Persister"/>
    </service>
-   <reference bind="setConfig" cardinality="1..1" interface="pl.edu.agh.ki.toik.sna.config.ConfigInterface" name="ConfigInterface" policy="static" unbind="unsetConfig"/>
+   <reference bind="setConfig" cardinality="1..1" interface="pl.edu.agh.ki.toik.sna.config.iface.ConfigInterface" name="ConfigInterface" policy="static" unbind="unsetConfig"/>
 </scr:component>

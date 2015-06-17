@@ -1,14 +1,12 @@
-package pl.edu.agh.ki.toik.sna.crawler.krs;
+package pl.edu.agh.ki.toik.sna.crawler.parliament;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.ComponentContext;
 
-import pl.edu.agh.ki.toik.sna.config.iface.ConfigInterface;
 import pl.edu.agh.ki.toik.sna.persistence.iface.GroupData;
 import pl.edu.agh.ki.toik.sna.persistence.iface.Persister;
 import pl.edu.agh.ki.toik.sna.persistence.iface.Person;
@@ -24,42 +22,27 @@ public class RestCrawler extends Thread {
 	final String ENTITIES_API_ENDPOINT = "https://api.mojepanstwo.pl/krs/podmioty?fields[]=id&page=__PAGE__";
 	final String ENTITY_API_ENDPOINT = "https://api.mojepanstwo.pl/krs/podmioty/__ID__?fields[]=nazwa_skrocona&layers[]=reprezentacja&layers[]=nadzor";
 	boolean stop = false;
-	
-	static Logger logger = Logger.getLogger("CrawlerKRS");
-	ConfigInterface config;
+
+	Logger logger = Logger.getLogger("CrawlerParliament");
 	Persister persister;
 	
-	public void setPersister(Persister persister) {
-		logger.info("Got persister: " + persister);
+	public synchronized void setPersister(Persister persister) {
+		logger.info(this.toString() + " got persister: " + persister);
 		this.persister = persister;
 	}
 	
-	public void unsetPersister(Persister persister) {
+	public synchronized void unsetPersister(Persister persister) {
 		if(this.persister == persister) {
 			this.persister = null;
 		}
 	}
 	
-	public void setConfig(ConfigInterface config) {
-		logger.info("Got config: " + config);
-		this.config = config;
-	}
-	
-	public void unsetConfig(ConfigInterface config) {
-		if(this.config == config) {
-			this.config = null;
-		}
-	}
-	
-	@Activate
-	protected void activate() {
+	protected void activate(ComponentContext context) {
 		logger.info("Starting crawler...");
 		this.start();
-		currentPage = Integer.parseInt(config.getProperty("crawler.krs.page", "1"));
 	}
 	
-	@Deactivate
-	protected void deactivate() {
+	protected void deactivate(ComponentContext context) {
 		logger.info("Stopping crawler...");
 		try {
 			this.requestStop();
@@ -67,7 +50,6 @@ public class RestCrawler extends Thread {
 		} catch (InterruptedException e) {
 			logger.log(Level.SEVERE, "Exception during crawler deactivation", e);
 		}
-		config.setProperty("crawler.krs.page", Integer.toString(currentPage));
 	}
 	
 	public void requestStop() {

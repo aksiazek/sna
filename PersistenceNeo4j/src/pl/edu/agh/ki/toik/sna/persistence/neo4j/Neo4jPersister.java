@@ -7,9 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Deactivate;
 
-import pl.edu.agh.ki.toik.sna.config.ConfigInterface;
+import pl.edu.agh.ki.toik.sna.config.iface.ConfigInterface;
 import pl.edu.agh.ki.toik.sna.persistence.iface.GroupData;
 import pl.edu.agh.ki.toik.sna.persistence.iface.Persister;
 import pl.edu.agh.ki.toik.sna.persistence.iface.Person;
@@ -27,7 +28,8 @@ public class Neo4jPersister implements Persister {
 		this.config = null;
 	}
 	
-	protected void activate(ComponentContext context) {
+	@Activate
+	protected void activate() {
 		try {
 			Class.forName("org.neo4j.jdbc.Driver");
 			connection = DriverManager.getConnection(
@@ -43,7 +45,8 @@ public class Neo4jPersister implements Persister {
         }
 	}
 	
-	protected void deactivate(ComponentContext context) {
+	@Deactivate
+	protected void deactivate() {
 		try {
 			connection.close();
 		} catch (SQLException e) {

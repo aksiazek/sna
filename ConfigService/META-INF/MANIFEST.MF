@@ -3,8 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ConfigService
 Bundle-SymbolicName: pl.edu.agh.ki.toik.sna.config;singleton:=true
 Bundle-Version: 1.0.0.snapshot
-Bundle-Activator: pl.edu.agh.ki.toik.sna.config.ConfigService
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.osgi.framework;version="1.3.0"
+Import-Package: org.osgi.framework;version="1.3.0",
+ org.osgi.service.component;version="1.2.2",
+ pl.edu.agh.ki.toik.sna.config.iface
 Bundle-ActivationPolicy: lazy
-Require-Bundle: pl.edu.agh.ki.toik.sna.config.iface
+Service-Component: OSGI-INF/persistence-component.xml
