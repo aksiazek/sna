@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ConfigInterface
+Bundle-SymbolicName: pl.edu.agh.ki.toik.sna.config.iface;singleton:=true
+Bundle-Version: 1.0.0.snapshot
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: pl.edu.agh.ki.toik.sna.config
+Bundle-ActivationPolicy: lazy

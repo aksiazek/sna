@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="pl.edu.agh.ki.toik.sna.config">
+   <implementation class="pl.edu.agh.ki.toik.sna.config.ConfigService"/>
+   <service>
+      <provide interface="pl.edu.agh.ki.toik.sna.config.ConfigInterface"/>
+   </service>
+</scr:component>
