@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="pl.edu.agh.ki.toik.sna.persistence.stdout">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="pl.edu.agh.ki.toik.sna.persistence.stdout">
    <implementation class="pl.edu.agh.ki.toik.sna.persistence.stdout.StdoutPersister"/>
    <service>
       <provide interface="pl.edu.agh.ki.toik.sna.persistence.iface.Persister"/>

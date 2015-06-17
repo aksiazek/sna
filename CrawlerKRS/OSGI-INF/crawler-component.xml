@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="pl.edu.agh.ki.toik.sna.crawler.krs">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" name="pl.edu.agh.ki.toik.sna.crawler.krs">
    <implementation class="pl.edu.agh.ki.toik.sna.crawler.krs.RestCrawler"/>
    <reference bind="setPersister" cardinality="1..1" interface="pl.edu.agh.ki.toik.sna.persistence.iface.Persister" name="Persister" policy="static" unbind="unsetPersister"/>
 </scr:component>

@@ -2,6 +2,10 @@ package pl.edu.agh.ki.toik.sna.crawler.krs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.osgi.service.component.ComponentContext;
 
 import pl.edu.agh.ki.toik.sna.persistence.iface.GroupData;
 import pl.edu.agh.ki.toik.sna.persistence.iface.Persister;
@@ -19,15 +23,32 @@ public class RestCrawler extends Thread {
 	final String ENTITY_API_ENDPOINT = "https://api.mojepanstwo.pl/krs/podmioty/__ID__?fields[]=nazwa_skrocona&layers[]=reprezentacja&layers[]=nadzor";
 	boolean stop = false;
 	
+	Logger logger = Logger.getLogger("CrawlerKRS");
 	Persister persister;
 	
 	public synchronized void setPersister(Persister persister) {
+		logger.info(this.toString() + " got persister: " + persister);
 		this.persister = persister;
 	}
 	
 	public synchronized void unsetPersister(Persister persister) {
 		if(this.persister == persister) {
 			this.persister = null;
+		}
+	}
+	
+	protected void activate(ComponentContext context) {
+		logger.info("Starting crawler...");
+		this.start();
+	}
+	
+	protected void deactivate(ComponentContext context) {
+		logger.info("Stopping crawler...");
+		try {
+			this.requestStop();
+			this.join();
+		} catch (InterruptedException e) {
+			logger.log(Level.SEVERE, "Exception during crawler deactivation", e);
 		}
 	}
 	
@@ -43,6 +64,7 @@ public class RestCrawler extends Thread {
 					crawlPage(currentPage);
 					currentPage++;
 				} catch(Exception e) {
+					logger.log(Level.SEVERE, "Exception during crawling loop", e);
 					retries--;
 				}
 			}
@@ -53,16 +75,19 @@ public class RestCrawler extends Thread {
 	}
 	
 	public void crawlPage(int page) throws NumberFormatException, Exception {
+		logger.info("Crawling page " + page);
+		
 		JSONResource json = r.json(ENTITIES_API_ENDPOINT.replace("__PAGE__", Integer.toString(page)));
 		int count = Integer.parseInt(json.get(Resty.path("search.pagination.count")).toString());
-		int total = Integer.parseInt(json.get(Resty.path("search.pagination.count")).toString());
+		int total = Integer.parseInt(json.get(Resty.path("search.pagination.total")).toString());
 		int from = Integer.parseInt(json.get(Resty.path("search.pagination.from")).toString());
+		
+		logger.info("Processing batch " + from + " - " + (from+count - 1) + " of " + total);
 		
 		if(from > total) {
 			throw new IndexOutOfBoundsException("Page number is out of a valid range");
 		}
 		
-		System.out.println(json.get(Resty.path("search.dataobjects")));
 		JSONArray results = (JSONArray)json.get(Resty.path("search.dataobjects"));
 		assert count == results.length();
 		
@@ -74,10 +99,10 @@ public class RestCrawler extends Thread {
 	public Person getPerson(JSONObject resource, String defaultRole) throws JSONException {
 		Person person = new Person();
 		person.name = resource.getString("nazwa");
-		if(resource.getString("data_urodzenia") != null) {
+		if(resource.has("data_urodzenia")) {
 			person.birth = resource.getString("data_urodzenia");
 		}
-		if(resource.getString("funkcja") != null) {
+		if(resource.has("funkcja")) {
 			person.tags.add(resource.getString("funkcja"));
 		} else if (defaultRole != null) {
 			person.tags.add(defaultRole);
@@ -94,6 +119,8 @@ public class RestCrawler extends Thread {
 	}
 	
 	public void crawlEntity(int id) throws Exception {
+		logger.info("Crawling object " + id);
+		
 		JSONResource json = r.json(ENTITY_API_ENDPOINT.replace("__ID__", Integer.toString(id)));
 		
 		GroupData group = new GroupData();
@@ -105,6 +132,6 @@ public class RestCrawler extends Thread {
 		addPeople(peopleList, (JSONArray)json.get(Resty.path("object.layers.reprezentacja")), "Reprezentant");
 		addPeople(peopleList, (JSONArray)json.get(Resty.path("object.layers.nadzor")), "Członek Rady Nadzorczej");
 		
-		// TODO: save GroupData and List<Person> in Neo4J
+		persister.persist(group, peopleList);
 	}
 }
