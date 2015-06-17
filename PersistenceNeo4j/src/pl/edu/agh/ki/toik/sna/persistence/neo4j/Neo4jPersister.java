@@ -7,6 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.osgi.service.component.ComponentContext;
+
+import pl.edu.agh.ki.toik.sna.config.ConfigInterface;
 import pl.edu.agh.ki.toik.sna.persistence.iface.GroupData;
 import pl.edu.agh.ki.toik.sna.persistence.iface.Persister;
 import pl.edu.agh.ki.toik.sna.persistence.iface.Person;
@@ -14,17 +17,38 @@ import pl.edu.agh.ki.toik.sna.persistence.iface.Person;
 public class Neo4jPersister implements Persister {
 
 	private Connection connection;
+	private ConfigInterface config = null;
 	
-	public Neo4jPersister() {
+	public void setConfig(ConfigInterface config) {
+		this.config = config;
+	}
+	
+	public void unsetConfig() {
+		this.config = null;
+	}
+	
+	protected void activate(ComponentContext context) {
 		try {
 			Class.forName("org.neo4j.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:neo4j://localhost:7474/", "neo4j", "test123");
+			connection = DriverManager.getConnection(
+				config.getProperty("neo4j.url", "jdbc:neo4j://localhost:7474/"),
+				config.getProperty("neo4j.user", "neo4j"),
+				config.getProperty("neo4j.pass", "neo4j")
+			);
 			connection.setAutoCommit(false);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
             throw new RuntimeException(e);
         }
+	}
+	
+	protected void deactivate(ComponentContext context) {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public void println(String x) {
