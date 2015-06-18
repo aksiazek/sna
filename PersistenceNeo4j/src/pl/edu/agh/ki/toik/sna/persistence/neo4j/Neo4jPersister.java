@@ -77,15 +77,9 @@ public class Neo4jPersister implements Persister {
 				stmt.setString(1, person.name);
 				try (ResultSet rs = stmt.executeQuery()) {
 					if(!rs.next()) {
-						try(PreparedStatement st = connection.prepareStatement(personCreate))
-						{
-						    st.setString(1, person.name);
-						    st.execute();
-						    connection.commit();
-						} catch (SQLException e) {
-							connection.rollback();
-				        	throw new RuntimeException(e);
-				        }
+						PreparedStatement st = connection.prepareStatement(personCreate);
+						st.setString(1, person.name);
+						st.execute();
 					}
 				}
 			} catch (SQLException e) {
@@ -96,25 +90,25 @@ public class Neo4jPersister implements Persister {
 				if(person == collegue)
 					continue;
 				
-				try(PreparedStatement st = connection.prepareStatement(grouping))
-				{
+				PreparedStatement st;
+				try {
+					st = connection.prepareStatement(grouping);
 				    st.setString(1, person.name);
 				    st.setString(2, collegue.name);
 				    st.setString(3, groupData.id);
 				    st.setString(4, groupData.source);
 				    st.setString(5, groupData.name);
 				    st.execute();
-				    connection.commit();
 				} catch (SQLException e) {
-					try {
-						connection.rollback();
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					}
-		        	throw new RuntimeException(e);
-		        }
-				
+					throw new RuntimeException(e);
+				}
 			}
+		}
+		
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
 		}
 		
 		
