@@ -64,6 +64,7 @@ public class ConfigService implements ConfigInterface {
 	
 	public void setProperty(String key, String value) {
 		props.setProperty(key, value);
+		deactivate(null);
 	}
 
 }
