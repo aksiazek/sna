@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>RelVis: Relations visualizer</title>
+<link href="css/bootstrap.min.css" rel="stylesheet" />
+<style type="text/css">
+#visualization, #spinner-box {
+	display: block;
+	position: absolute;
+	top: 51px;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+}
+#spinner-box {
+	 background: white;
+	 opacity: 0.7;
+	 display: none;
+}
+#spinner {
+	display: block;
+	width: 64px;
+	height: 64px;
+	
+	background-image: url(img/spinner.png);
+	
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	padding-top: -32px -32px;
+}
+</style>
+</head>
+<body>
+
+<noscript>
+<div style="position:fixed;top:0;bottom:0;left:0;right:0;">
+This application requires JavaScript
+</div>
+</noscript>
+
+<nav class="navbar navbar-default navbar-static-top">
+  <div class="container">
+    <ul class="nav navbar-nav">
+      <li class="navbar-brand">RelVis</li>
+      <li class="nav-link" id="nav-link-person"><a href="#" onclick="selectNav(this)">Person</a></li>
+      <li class="nav-more" id="nav-more-person">
+        <form class="navbar-form navbar-left" onsubmit="return processPerson(this)">
+          <div class="form-group">
+            <input type="text" name="person" class="form-control" placeholder="Surname and name" />
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+      </li>
+      <li class="nav-link" id="nav-link-connection"><a href="#" onclick="selectNav(this)">Connection</a></li>
+      <li class="nav-more" id="nav-more-connection">
+        <form class="navbar-form navbar-left" onsubmit="return processConnection(this)">
+          <div class="form-group">
+            <input type="text" name="person1" class="form-control" placeholder="Surname and name" />
+            <input type="text" name="person2" class="form-control" placeholder="Surname and name" />
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+      </li>
+      <li class="nav-link" id="nav-link-group"><a href="#" onclick="selectNav(this)">Group</a></li>
+      <li class="nav-more" id="nav-more-group">
+        <form class="navbar-form navbar-left" onsubmit="return processGroup(this)">
+          <div class="form-group">
+            <input type="text" name="group" class="form-control" placeholder="Group" />
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+      </li>
+      <li class="nav-link" id="nav-link-common"><a href="#" onclick="selectNav(this)">Intersection</a></li>
+      <li class="nav-more" id="nav-more-common">
+        <form class="navbar-form navbar-left" onsubmit="return processCommon(this)">
+          <div class="form-group">
+            <input type="text" name="group1" class="form-control" placeholder="Group" />
+            <input type="text" name="group2" class="form-control" placeholder="Group" />
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div id="visualization">
+</div>
+
+<div id="spinner-box">
+<div id="spinner"></div>
+</div>
+
+<script tyle="text/javascript" src="js/d3.min.js"></script>
+<script tyle="text/javascript" src="js/sigma.min.js"></script>
+<script tyle="text/javascript" src="js/sigma.layout.forceAtlas2.min.js"></script>
+<script tyle="text/javascript" src="js/sigma.plugins.dragNodes.min.js"></script>
+<script tyle="text/javascript" src="js/sigma.renderers.edgeLabels.min.js"></script>
+<script tyle="text/javascript" src="js/sigma.parsers.json.min.js"></script>
+<script tyle="text/javascript" src="js/sigma.parsers.cypher.js"></script>
+<script type="text/javascript">
+function hideNavAll() {
+	d3.selectAll(".nav-more").style("display", "none");
+	d3.selectAll(".nav-link").property("className", "nav-link");
+}
+function showNav(name) {
+	hideNavAll();
+	d3.select("#nav-more-" + name).style("display", "block");
+	d3.select("#nav-link-" + name).property("className", "nav-link active");
+}
+function selectNav(x) {
+	id = x.parentNode.id;
+	showNav(id.substring(id.lastIndexOf("-")+1));
+}
+
+spinner = false;
+spinnerElement = d3.select("#spinner");
+spinnerPosition = 0;
+function spinnerStart() {
+	if(spinner) return true;
+	spinner = setInterval(function(){spinnerSpin();}, 50);
+	d3.select("#spinner-box").style("display", "block");
+}
+
+function spinnerSpin() {
+	spinnerPosition = (spinnerPosition + 64) % 1280;
+	spinnerElement.style("background-position", (-spinnerPosition) + "px 0px");
+}
+
+function spinnerStop() {
+	d3.select("#spinner-box").style("display", "none");
+	clearInterval(spinner);
+	spinner = false;
+}
+
+sigmaInstance = new sigma({
+	settings: {
+	},
+	renderers: [
+		{container: 'visualization', type: 'canvas'},
+	],
+});
+sigmaInstance.startForceAtlas2({
+	worker: false,
+	adjustSizes: true,
+	strongGravityMode: true,
+	linLogMode: true
+});
+try {
+	var drag = new sigma.plugins.dragNodes(sigmaInstance, sigmaInstance.renderers[0]);
+} catch(e) {
+	console.log(e);
+}
+
+function processQuery(query) {
+	if(spinnerStart()) {
+		return;
+	}
+	
+	sigma.neo4j.cypher(
+		{ url: 'http://192.168.0.11:7474', user: 'neo4j', password: 'test123' },
+		query,
+		sigmaInstance,
+		function() { sigmaInstance.refresh(); spinnerStop(); }
+	);
+}
+
+function processPerson(form) {
+	processQuery("MATCH (n) WHERE n.name =~ '" + form.elements["person"].value + ".*' OPTIONAL MATCH (n)-[r]->(m) RETURN n,r,m LIMIT 100");
+	return false;
+}
+
+function processConnection(form) {
+	processQuery("MATCH (n) WHERE n.name =~ '" + form.elements["person1"].value + ".*' MATCH (n)-[r*0..10]->(m) WHERE m.name =~ '" + form.elements["person2"].value + ".*' RETURN n,r,m LIMIT 10");
+	return false;
+}
+
+function processGroup(form) {
+	processQuery("MATCH (n)-[r]-(m) WHERE r.name =~ '" + form.elements["group"].value + ".*' RETURN n,r,m LIMIT 100");
+	return false;
+}
+
+function processCommon(form) {
+	processQuery("MATCH (n)-[r]-(m)-[s]-(o) WHERE r.name =~ '" + form.elements["group1"].value + ".*' AND s.name =~ '" + form.elements["group2"].value + ".*' AND r.id <> s.id RETURN n,r,m,s,o LIMIT 50");
+	return false;
+}
+
+showNav("person");
+</script>
+
+</body>
+</html>
