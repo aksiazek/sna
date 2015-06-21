@@ -163,6 +163,13 @@ function processQuery(query) {
 		query,
 		sigmaInstance,
 		function() {
+			sigmaInstance.camera.goTo({
+				x: 0,
+				y: 0,
+				angle: 0,
+				ratio: 1
+			});
+			sigmaInstance.killForceAtlas2();
 			sigmaInstance.refresh();
 			sigmaInstance.startForceAtlas2();
 			setTimeout(function() {sigmaInstance.stopForceAtlas2(); spinnerStop();}, 400);
