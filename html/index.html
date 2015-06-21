@@ -101,6 +101,10 @@ This application requires JavaScript
 <script tyle="text/javascript" src="js/sigma.parsers.json.min.js"></script>
 <script tyle="text/javascript" src="js/sigma.parsers.cypher.js"></script>
 <script type="text/javascript">
+neo4j_settings = {
+	url: 'http://127.0.0.1:7474', user: 'neo4j', password: 'admin'
+};
+
 function hideNavAll() {
 	d3.selectAll(".nav-more").style("display", "none");
 	d3.selectAll(".nav-link").property("className", "nav-link");
@@ -155,7 +159,7 @@ function processQuery(query) {
 	}
 	
 	sigma.neo4j.cypher(
-		{ url: 'http://127.0.0.1:7474', user: 'neo4j', password: 'neo4j' },
+		neo4j_settings,
 		query,
 		sigmaInstance,
 		function() { sigmaInstance.refresh(); spinnerStop(); sigmaInstance.startForceAtlas2(); }
