@@ -162,7 +162,11 @@ function processQuery(query) {
 		neo4j_settings,
 		query,
 		sigmaInstance,
-		function() { sigmaInstance.refresh(); spinnerStop(); sigmaInstance.startForceAtlas2(); }
+		function() {
+			sigmaInstance.refresh();
+			sigmaInstance.startForceAtlas2();
+			setTimeout(function() {sigmaInstance.stopForceAtlas2(); spinnerStop();}, 400);
+		}
 	);
 }
 
