@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: resty-wrapper
+Bundle-SymbolicName: pl.edu.agh.resty-wrapper
+Bundle-Version: 1.0.0.snapshot
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ClassPath: lib/resty-0.3.1.jar,
+ .
+Export-Package: us.monoid.json,
+ us.monoid.util,
+ us.monoid.web,
+ us.monoid.web.auth,
+ us.monoid.web.jp.javacc,
+ us.monoid.web.mime
