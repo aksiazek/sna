@@ -24,8 +24,10 @@ public class Neo4jPersister implements Persister {
 		this.config = config;
 	}
 	
-	public void unsetConfig() {
-		this.config = null;
+	public void unsetConfig(ConfigInterface config) {
+		if(this.config == config) {
+			this.config = null;
+		}
 	}
 	
 	@Activate
