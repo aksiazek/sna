@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Deactivate;
 
 import pl.edu.agh.ki.toik.sna.config.iface.ConfigInterface;
 
@@ -17,17 +18,11 @@ public class ConfigService implements ConfigInterface {
 
 	static Logger logger = Logger.getLogger("CrawlerKRS");
 	
-	private ComponentContext context;
 	private static Properties props;
 	private File configFile;
 
-	ComponentContext getContext() {
-		return context;
-	}
-
-	protected void activate(ComponentContext context) {
-		this.context = context;
-
+	@Activate
+	protected void activate() {
 		configFile = new File(CONFIG_FILE);
 		logger.info("Using config file: " + configFile.getAbsolutePath());
 		try {
@@ -44,7 +39,9 @@ public class ConfigService implements ConfigInterface {
 		}
 	}
 	
-	protected void deactivate(ComponentContext context) {
+	@Deactivate
+	protected void deactivate() {
+		logger.info("Saving config...");
 		try {
 			FileOutputStream out = new FileOutputStream(configFile);
 			props.store(out, null);
@@ -64,7 +61,7 @@ public class ConfigService implements ConfigInterface {
 	
 	public void setProperty(String key, String value) {
 		props.setProperty(key, value);
-		deactivate(null);
+		deactivate();
 	}
 
 }

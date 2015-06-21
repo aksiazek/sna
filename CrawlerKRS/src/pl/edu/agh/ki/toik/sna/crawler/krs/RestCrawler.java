@@ -81,6 +81,7 @@ public class RestCrawler extends Thread {
 				try {
 					crawlPage(currentPage);
 					currentPage++;
+					config.setProperty("crawler.krs.page", Integer.toString(currentPage));
 				} catch(Exception e) {
 					logger.log(Level.SEVERE, "Exception during crawling loop", e);
 					retries--;
@@ -88,8 +89,10 @@ public class RestCrawler extends Thread {
 			}
 		} catch(IndexOutOfBoundsException e) {
 			currentPage++;
+			config.setProperty("crawler.krs.page", Integer.toString(currentPage));
 			return;
 		}
+		config.setProperty("crawler.krs.page", Integer.toString(currentPage));
 	}
 	
 	public void crawlPage(int page) throws NumberFormatException, Exception {
