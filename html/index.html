@@ -142,12 +142,7 @@ sigmaInstance = new sigma({
 		{container: 'visualization', type: 'canvas'},
 	],
 });
-sigmaInstance.startForceAtlas2({
-	worker: false,
-	adjustSizes: true,
-	strongGravityMode: true,
-	linLogMode: true
-});
+
 try {
 	var drag = new sigma.plugins.dragNodes(sigmaInstance, sigmaInstance.renderers[0]);
 } catch(e) {
@@ -160,10 +155,10 @@ function processQuery(query) {
 	}
 	
 	sigma.neo4j.cypher(
-		{ url: 'http://192.168.0.11:7474', user: 'neo4j', password: 'test123' },
+		{ url: 'http://127.0.0.1:7474', user: 'neo4j', password: 'neo4j' },
 		query,
 		sigmaInstance,
-		function() { sigmaInstance.refresh(); spinnerStop(); }
+		function() { sigmaInstance.refresh(); spinnerStop(); sigmaInstance.startForceAtlas2(); }
 	);
 }
 
