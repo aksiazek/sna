@@ -171,12 +171,12 @@ function processQuery(query) {
 }
 
 function processPerson(form) {
-	processQuery("MATCH (n) WHERE n.name =~ '" + form.elements["person"].value + ".*' OPTIONAL MATCH (n)-[r]->(m) RETURN n,r,m LIMIT 100");
+	processQuery("MATCH (n) WHERE n.name =~ '" + form.elements["person"].value + ".*' OPTIONAL MATCH (n)-[r]-(m) RETURN n,r,m LIMIT 100");
 	return false;
 }
 
 function processConnection(form) {
-	processQuery("MATCH (n) WHERE n.name =~ '" + form.elements["person1"].value + ".*' MATCH (n)-[r*0..10]->(m) WHERE m.name =~ '" + form.elements["person2"].value + ".*' RETURN n,r,m LIMIT 10");
+	processQuery("MATCH (n) WHERE n.name =~ '" + form.elements["person1"].value + ".*' MATCH (n)-[r*0..10]-(m) WHERE m.name =~ '" + form.elements["person2"].value + ".*' RETURN n,r,m LIMIT 10");
 	return false;
 }
 
