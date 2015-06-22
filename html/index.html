@@ -48,7 +48,7 @@ This application requires JavaScript
       <li class="nav-more" id="nav-more-person">
         <form class="navbar-form navbar-left" onsubmit="return processPerson(this)">
           <div class="form-group">
-            <input type="text" name="person" class="form-control" placeholder="Surname and name" />
+            <input type="text" name="person" list="person" oninput="suggest(this)" class="form-control" placeholder="Surname Name" />
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
@@ -57,8 +57,8 @@ This application requires JavaScript
       <li class="nav-more" id="nav-more-connection">
         <form class="navbar-form navbar-left" onsubmit="return processConnection(this)">
           <div class="form-group">
-            <input type="text" name="person1" class="form-control" placeholder="Surname and name" />
-            <input type="text" name="person2" class="form-control" placeholder="Surname and name" />
+            <input type="text" name="person1" list="person1" oninput="suggest(this)" class="form-control" placeholder="Surname Name" />
+            <input type="text" name="person2" list="person2" oninput="suggest(this)" class="form-control" placeholder="Surname Name" />
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
@@ -67,7 +67,7 @@ This application requires JavaScript
       <li class="nav-more" id="nav-more-group">
         <form class="navbar-form navbar-left" onsubmit="return processGroup(this)">
           <div class="form-group">
-            <input type="text" name="group" class="form-control" placeholder="Group" />
+            <input type="text" name="group" list="group" oninput="suggest(this)" class="form-control" placeholder="Group" />
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
@@ -76,8 +76,8 @@ This application requires JavaScript
       <li class="nav-more" id="nav-more-common">
         <form class="navbar-form navbar-left" onsubmit="return processCommon(this)">
           <div class="form-group">
-            <input type="text" name="group1" class="form-control" placeholder="Group" />
-            <input type="text" name="group2" class="form-control" placeholder="Group" />
+            <input type="text" name="group1" list="group1" oninput="suggest(this)" class="form-control" placeholder="Group" />
+            <input type="text" name="group2" list="group2" oninput="suggest(this)" class="form-control" placeholder="Group" />
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
@@ -93,6 +93,19 @@ This application requires JavaScript
 <div id="spinner"></div>
 </div>
 
+<datalist id="person">
+</datalist>
+<datalist id="person1">
+</datalist>
+<datalist id="person2">
+</datalist>
+<datalist id="group">
+</datalist>
+<datalist id="group1">
+</datalist>
+<datalist id="group2">
+</datalist>
+
 <script tyle="text/javascript" src="js/d3.min.js"></script>
 <script tyle="text/javascript" src="js/sigma.min.js"></script>
 <script tyle="text/javascript" src="js/sigma.layout.forceAtlas2.min.js"></script>
@@ -104,6 +117,37 @@ This application requires JavaScript
 neo4j_settings = {
 	url: 'http://127.0.0.1:7474', user: 'neo4j', password: 'admin'
 };
+
+function suggestClear(element) {
+	while(element.hasChildNodes()) {
+		element.removeChild(element.lastChild);
+	}
+}
+function suggest(input) {
+	if(input.value.length == 0) suggestClear(input.list);
+	
+	var match = '(n)';
+	if(input.name[0] == 'g') {
+		match = '()-[n]-()';
+	}
+	
+	sigma.neo4j.send(neo4j_settings, '/db/data/transaction/commit', 'POST',
+		JSON.stringify({
+			statements: [
+				{ statement: "MATCH " + match + " WHERE n.name =~ '" + input.value + ".*' RETURN n.name LIMIT 10" }
+			]
+		}),
+		function (data) {
+			suggestClear(input.list);
+			var results = data.results[0].data;
+			for(var i = 0; i < results.length; i++) {
+				var option = document.createElement("option");
+				option.value = results[i].row[0];
+				input.list.appendChild(option);
+			}
+		}
+	);
+}
 
 function hideNavAll() {
 	d3.selectAll(".nav-more").style("display", "none");
