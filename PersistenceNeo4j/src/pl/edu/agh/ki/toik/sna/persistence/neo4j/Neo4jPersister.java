@@ -73,7 +73,6 @@ public class Neo4jPersister implements Persister {
 				+ " CREATE UNIQUE (p1)-[:RELATED {id: {3}, source: {4}, name: {5}}]-(p2)";
 		
 		for(Person person : people) {
-			
 			try(PreparedStatement stmt = connection.prepareStatement(personSearch))
 			{
 				stmt.setString(1, person.name);
@@ -105,15 +104,13 @@ public class Neo4jPersister implements Persister {
 					throw new RuntimeException(e);
 				}
 			}
+			
+			try {
+				connection.commit();
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
 		}
-		
-		try {
-			connection.commit();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-		
-		
 	}
 
 }

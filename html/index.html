@@ -115,7 +115,7 @@ This application requires JavaScript
 <script tyle="text/javascript" src="js/sigma.parsers.cypher.js"></script>
 <script type="text/javascript">
 neo4j_settings = {
-	url: 'http://127.0.0.1:7474', user: 'neo4j', password: 'admin'
+	url: 'http://127.0.0.1:7474', user: 'neo4j', password: 'neo4j'
 };
 
 function suggestClear(element) {
@@ -134,7 +134,7 @@ function suggest(input) {
 	sigma.neo4j.send(neo4j_settings, '/db/data/transaction/commit', 'POST',
 		JSON.stringify({
 			statements: [
-				{ statement: "MATCH " + match + " WHERE n.name =~ '" + input.value + ".*' RETURN n.name LIMIT 10" }
+				{ statement: "MATCH " + match + " WHERE n.name =~ '" + input.value + ".*' RETURN DISTINCT n.name LIMIT 10" }
 			]
 		}),
 		function (data) {
@@ -227,7 +227,7 @@ function processPerson(form) {
 }
 
 function processConnection(form) {
-	processQuery("MATCH (n) WHERE n.name =~ '" + form.elements["person1"].value + ".*' MATCH (n)-[r*0..10]-(m) WHERE m.name =~ '" + form.elements["person2"].value + ".*' RETURN n,r,m LIMIT 10");
+	processQuery("MATCH (n) WHERE n.name =~ '" + form.elements["person1"].value + ".*' MATCH (n)-[r*0..3]-(m) WHERE m.name =~ '" + form.elements["person2"].value + ".*' RETURN n,r,m LIMIT 10");
 	return false;
 }
 

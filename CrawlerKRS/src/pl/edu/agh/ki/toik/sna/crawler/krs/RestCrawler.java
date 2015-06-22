@@ -87,7 +87,7 @@ public class RestCrawler extends Thread {
 					retries--;
 				}
 			}
-		} catch(IndexOutOfBoundsException e) {
+		} catch(Exception e) {
 			currentPage++;
 			config.setProperty("crawler.krs.page", Integer.toString(currentPage));
 			return;
