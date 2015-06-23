@@ -13,7 +13,7 @@ W Internecie można znaleźć wiele powiązań między osobami (m.in. osoby w je
 
 ## Dekompozycja problemu
 
-* pobieranie danych (API, crawler, komponenty) - (Moje państwo - API)[http://mojepanstwo.pl/api/technical_info]
+* pobieranie danych (API, crawler, komponenty) - [Moje państwo - API](http://mojepanstwo.pl/api/technical_info)
 * przechowywanie (baza grafowa)
 * wyszukiwanie (API)
 * wyświetlanie (część użytkowa - JS)
@@ -38,11 +38,11 @@ W Internecie można znaleźć wiele powiązań między osobami (m.in. osoby w je
 
 ## Istniejące podobne projekty
 
-(Moje Państwo)[http://mojepanstwo.pl/krs] - pozwala na minimalistyczną wizualizację najbliższych powiązań dla encji z KRS
+[Moje Państwo](http://mojepanstwo.pl/krs) - pozwala na minimalistyczną wizualizację najbliższych powiązań dla encji z KRS
 
 ![](img/mojepanstwo.png)
 
-(Zbiór linków do różnych narzędzi do analizy sieci społecznych)[http://www.kstoolkit.org/Social+Network+Analysis]
+[Zbiór linków do różnych narzędzi do analizy sieci społecznych](http://www.kstoolkit.org/Social+Network+Analysis)
 
 ## Stos technologiczny
 
@@ -112,7 +112,7 @@ Baza udostępnia API REST umożliwiające wykonywanie wszelkich zapytań na dany
 
 ## Interfejs
 
-Po stronie użytkownika aplikacja będzie dostępna jako aplikacja internetowa pisana w HTML i (Vanilla JS)[http://vanilla-js.com/] z wizualizacjami w D3.js (+ ew. Sigma.js). Zapytania o dane będą wykonywane bezpośrednio do bazy Neo4J.
+Po stronie użytkownika aplikacja będzie dostępna jako aplikacja internetowa pisana w HTML i [Vanilla JS](http://vanilla-js.com/) z wizualizacjami w D3.js (+ ew. Sigma.js). Zapytania o dane będą wykonywane bezpośrednio do bazy Neo4J.
 
 Wyróżnione zostaną elementy:
 
@@ -192,8 +192,8 @@ Uwaga! Crawler wymaga działającej instancji bazy Neo4j.
 Instrukcja instalacji i uruchomienia:
 
 1. Sklonować repozytorium do wybranego folderu.
-2. Do katalogu Resty/lib należy pobrać (resty-0.3.1.jar)[http://central.maven.org/maven2/us/monoid/web/resty/0.3.1/resty-0.3.1.jar]
-3. Do katalogu PersistenceNeo4j/lib należy pobrać (neo4j-jdbc-2.1.4-jar-with-dependencies.jar)[https://m2.neo4j.org/service/local/artifact/maven/redirect?r#releases&g#org.neo4j&a#neo4j-jdbc&v#2.1.4&e#jar&c#jar-with-dependencies]
+2. Do katalogu Resty/lib należy pobrać [resty-0.3.1.jar](http://central.maven.org/maven2/us/monoid/web/resty/0.3.1/resty-0.3.1.jar)
+3. Do katalogu PersistenceNeo4j/lib należy pobrać [neo4j-jdbc-2.1.4-jar-with-dependencies.jar](https://m2.neo4j.org/service/local/artifact/maven/redirect?r#releases&g#org.neo4j&a#neo4j-jdbc&v#2.1.4&e#jar&c#jar-with-dependencies)
 4. Zaimportować project do Eclipse for RCP Developement (File -> Import -> Existing Projects into Workspace).
 5. W katalogu uruchomieniowym utworzyć plik config.ini, w którym należy podać informacje potrzebne do połączenia z bazą danych:
 
