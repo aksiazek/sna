@@ -5,20 +5,20 @@ Autorzy:
 - Jacek Kowalski
 - Aleksander Książek
 
-# Wizja systemu
+## Wizja systemu
 
-## Ogólna idea
+### Ogólna idea
 
 W Internecie można znaleźć wiele powiązań między osobami (m.in. osoby w jednej radzie nadzorczej, w tym samym samorządzie gminnym itp.). Żaden z serisów nie agreguje jednak danych z wielu źródeł, by umożliwić wyszukiwanie różnych rodzajów związków między ludźmi - rozwiązanie takie mogłoby umożliwić społeczną kontrolę nad osobami publicznymi.
 
-## Dekompozycja problemu
+### Dekompozycja problemu
 
 * pobieranie danych (API, crawler, komponenty) - [Moje państwo - API](http://mojepanstwo.pl/api/technical_info)
 * przechowywanie (baza grafowa)
 * wyszukiwanie (API)
 * wyświetlanie (część użytkowa - JS)
 
-## Wymagania funkcjonalne
+### Wymagania funkcjonalne
 
 * mieć możliwość znalezienia powiązania między dwoma osobami - podając imię i nazwisko powinniśmy, na podstawie dostępnych danych, otrzymać łączącą je ścieżkę w grafie powiązań między osobami,
 
@@ -36,7 +36,7 @@ W Internecie można znaleźć wiele powiązań między osobami (m.in. osoby w je
 
 * udostępniać API/komponent umożliwiający import nowych źródeł danych
 
-## Istniejące podobne projekty
+### Istniejące podobne projekty
 
 [Moje Państwo](http://mojepanstwo.pl/krs) - pozwala na minimalistyczną wizualizację najbliższych powiązań dla encji z KRS
 
@@ -44,19 +44,19 @@ W Internecie można znaleźć wiele powiązań między osobami (m.in. osoby w je
 
 [Zbiór linków do różnych narzędzi do analizy sieci społecznych](http://www.kstoolkit.org/Social+Network+Analysis)
 
-## Stos technologiczny
+### Stos technologiczny
 
 * Java do web crawlera (OSGi)
 * Neo4j jako baza danych i silnik wyszukiwań
 * HTML / JavaScript (D3.js, Sigma.js) do wizualizacji
 
-# Architektura systemu
+## Architektura systemu
 
 ![](img/architecture.jpg)
 
 System będzie składał się z następujących elementów:
 
-## Komponentowy crawler
+### Komponentowy crawler
 
 Crawler ma za zadanie zbierać dane wykorzystywane do znajdowania powiązań, przetwarzać je do postaci właściwej dla bazy danych i zapisywać je.
 
@@ -104,13 +104,13 @@ Zapimplementowane zostanie pobieranie:
 * pobieranie listy radnych (gdzie dostępne),
 * pobieranie listy urzędników (gdzie dostępne).
 
-## Baza danych
+### Baza danych
 
 Dane o powiązaniach będą przechowywane w bazie danych Neo4J. Wierzchołkami grafu będą poszczególne osoby (Person), wraz z ich atrybutami, zaś krawędzie stanowią powiązania. Grupę stanowi klika w grafie, złożona z krawędzi o takim samym identyfikatorze powiązania.
 
 Baza udostępnia API REST umożliwiające wykonywanie wszelkich zapytań na danych (znalezienie wierzchołka, drogi, osób powiązanych, przecięcia grup).
 
-## Interfejs
+### Interfejs
 
 Po stronie użytkownika aplikacja będzie dostępna jako aplikacja internetowa pisana w HTML i [Vanilla JS](http://vanilla-js.com/) z wizualizacjami w D3.js (+ ew. Sigma.js). Zapytania o dane będą wykonywane bezpośrednio do bazy Neo4J.
 
@@ -123,11 +123,11 @@ Wyróżnione zostaną elementy:
   * części wspólnych dwóch grup (osoby wspólne dla obu grup lub powiązania między nimi),
 * moduł obsługi interfejsu graficznego (części wspólne dla wszystkich modułów).
 
-# Komponenty
+## Komponenty
 
 Komponenty są zaimplementowane w technologii OSGi
 
-## ConfigInterface
+### ConfigInterface
 
 Serwis z interfejsem umożliwiającym dostęp do danych konfiguracyjnych, stworzony na bazie interfejsu Properties:
 
@@ -140,19 +140,19 @@ public interface ConfigInterface {
 }
 ```
 
-## ConfigService
+### ConfigService
 
 Plugin implementujący ConfigInterface.
 
-## Crawler KRS
+### Crawler KRS
 
 Plugin - crawler danych KRS - przy uruchomieniu pobiera dane z ConfigInterface (crawler.krs.page - ostatnio pobrana strona danych) i zaczyna ściąganie danych.
 
-## Crawler Parliament
+### Crawler Parliament
 
 Crawler danych o parlamentarzystach - przy uruchomieniu pobiera dane z ConfigInterface (crawler.krs.parliament - ostatnio pobrana strona danych) i zaczyna ściąganie danych.
 
-## PersistenceInterface
+### PersistenceInterface
 
 Interfejs umożliwiający zapis ściągniętych danych:
 
@@ -175,17 +175,17 @@ public class Person {
 }
 ```
 
-## PersistenceStdout
+### PersistenceStdout
 
 Usługa wypisująca dane na standardowe wyjście, implementująca PersistanceInterface.
 
-## PersistenceStdout
+### PersistenceStdout
 
 Usługa zapisująca dane w bazie Neo4j, implementująca PersistanceInterface i wykorzystująca ConfigInterface - (ustawienia: neo4j.url, neo4j.user, neo4j.pass).
 
-# Instrukcja instalacji i uruchomienia
+## Instrukcja instalacji i uruchomienia
 
-## Crawler
+### Crawler
 
 Uwaga! Crawler wymaga działającej instancji bazy Neo4j.
 
@@ -217,7 +217,7 @@ Instrukcja instalacji i uruchomienia:
 	CREATE INDEX ON :RELATED(name)
 	```
 
-## Część użytkowa
+### Część użytkowa
 
 Część użytkowa znajduje się w repozytorium w katalogu html/.
 
@@ -238,7 +238,7 @@ Część użytkowa znajduje się w repozytorium w katalogu html/.
 - wizualizacja danej grupy (opcja Group) - należy podać "Nazwa firmy" (lub prefiks takiego identyfikatora; wielkość liter nie ma znaczenia),
 - wizualizacja przecięcia danej grupy (opcja Intersection) - należy podać dwie firmy w postaci "Nazwa firmy" (lub prefiks takiego identyfikatora; wielkość liter nie ma znaczenia).
 
-# Zbiory danych
+## Zbiory danych
 
 Wykorzystywane są zbiory danych z portalu http://mojepanstwo.pl/ :
 
@@ -250,6 +250,6 @@ Wykorzystywane są zbiory danych z portalu http://mojepanstwo.pl/ :
 - 18 661 osób,
 - 44 790 relacji.
 
-# Reprezentacja danych
+## Reprezentacja danych
 
 Dane są zapisywane w grafowej bazie danych. Wierzchołkami grafu są osoby wraz z atrybutem - imieniem i nazwiskiem. Powiązania są zapisywane jako krawędzie między wierzchołkami, wraz z atrybutami - identyfikatorem (np. numerem KRS) oraz nazwą (firmy, którą reprezentują lub nazwą powiązania).
